@@ -5,6 +5,7 @@ import os
 import tempfile
 import base64
 import logging
+import mimetypes
 from io import BytesIO
 
 from dify_plugin import Tool
@@ -155,7 +156,7 @@ class Json2xmindTool(Tool):
             json_data = tool_parameters.get('json_data', '{}')
             root_title = tool_parameters.get('root_title', '思维导图')
             max_depth = tool_parameters.get('max_depth', 10)
-            output_format = tool_parameters.get('output_format', 'base64')
+            output_format = tool_parameters.get('output_format', 'download')
             
             logger.info(f"参数解析完成: json_data类型={type(json_data)}, root_title={root_title}, max_depth={max_depth}, output_format={output_format}")
             
@@ -297,75 +298,8 @@ class Json2xmindTool(Tool):
             yield self.create_text_message(f"💾 准备生成{output_format}格式的文件...")
             
             # 根据输出格式处理文件
-            if output_format == 'zip':
-                # 返回 ZIP 格式（用户需要手动改扩展名）
-                temp_file = tempfile.NamedTemporaryFile(suffix='.xmind', delete=False)
-                temp_path = temp_file.name
-                temp_file.close()  # 关闭文件句柄，但保留文件
-                
-                if temp_path is None:
-                    raise ValueError("无法创建临时文件")
-                
-                # 保存XMind文件
-                try:
-                    xmind.save(workbook, temp_path)
-                except Exception as e:
-                    # 清理可能创建的临时文件
-                    try:
-                        if os.path.exists(temp_path):
-                            os.unlink(temp_path)
-                    except:
-                        pass
-                    raise Exception(f"保存XMind文件失败: {str(e)}")
-                
-                # 读取文件内容
-                try:
-                    with open(temp_path, 'rb') as f:
-                        file_content = f.read()
-                except Exception as e:
-                    # 清理临时文件
-                    try:
-                        os.unlink(temp_path)
-                    except:
-                        pass
-                    raise Exception(f"读取文件内容失败: {str(e)}")
-                
-                file_size = len(file_content)
-                zip_filename = filename.replace('.xmind', '.zip')
-                
-                # 清理临时文件
-                try:
-                    os.unlink(temp_path)
-                except Exception as e:
-                    logger.warning(f"清理临时文件失败: {e}")
-                
-                # 返回ZIP格式下载
-                yield self.create_blob_message(
-                    blob=file_content,
-                    meta={
-                        "mime_type": "application/zip",
-                        "filename": zip_filename
-                    }
-                )
-                
-                # 同时返回说明信息
-                yield self.create_json_message({
-                    "success": True,
-                    "message": f"文件已生成为 ZIP 格式，下载后请将扩展名改为 .xmind",
-                    "filename": zip_filename,
-                    "original_filename": filename,
-                    "file_size": file_size,
-                    "output_format": "zip",
-                    "instructions": "下载后请将文件扩展名从 .zip 改为 .xmind",
-                    "statistics": {
-                        "total_nodes": total_nodes,
-                        "max_depth_used": min(max_depth, self._calculate_depth(data)),
-                        "root_title": root_title
-                    }
-                })
-                
-            elif output_format == 'blob':
-                # 直接返回文件二进制数据（推荐用于直接下载）
+            if output_format == 'download' or output_format == 'blob':
+                # 直接下载XMind文件（推荐格式）
                 temp_file = tempfile.NamedTemporaryFile(suffix='.xmind', delete=False)
                 temp_path = temp_file.name
                 temp_file.close()  # 关闭文件句柄，但保留文件
@@ -405,23 +339,33 @@ class Json2xmindTool(Tool):
                 except Exception as e:
                     logger.warning(f"清理临时文件失败: {e}")
                 
-                # 返回blob消息用于直接下载
-                # 使用 application/octet-stream 确保浏览器按文件名下载
+                # 智能推断MIME类型并返回文件
+                # 确保XMind类型已注册
+                mimetypes.add_type('application/vnd.xmind.workbook', '.xmind')
+                
+                mime_type, _ = mimetypes.guess_type(filename)
+                if not mime_type:
+                    # 如果无法推断，使用XMind的标准MIME类型
+                    mime_type = "application/vnd.xmind.workbook"
+                
+                logger.info(f"使用MIME类型: {mime_type} 用于文件: {filename}")
+                
                 yield self.create_blob_message(
                     blob=file_content,
                     meta={
-                        "mime_type": "application/octet-stream",
+                        "mime_type": mime_type,
                         "filename": filename
                     }
                 )
                 
-                # 同时返回统计信息
+                # 同时返回成功信息
                 yield self.create_json_message({
                     "success": True,
-                    "message": f"XMind文件已生成，可直接下载",
+                    "message": f"XMind文件已生成，可直接下载使用",
                     "filename": filename,
                     "file_size": file_size,
-                    "output_format": "blob",
+                    "output_format": "download",
+                    "instructions": "📥 点击下载按钮即可获取 XMind 文件，可直接在 XMind 软件中打开使用",
                     "statistics": {
                         "total_nodes": total_nodes,
                         "max_depth_used": min(max_depth, self._calculate_depth(data)),
@@ -429,34 +373,8 @@ class Json2xmindTool(Tool):
                     }
                 })
                 
-            elif output_format == 'file':
-                # 直接保存到工作目录
-                output_path = os.path.join(os.getcwd(), filename)
-                try:
-                    xmind.save(workbook, output_path)
-                except Exception as e:
-                    raise Exception(f"保存XMind文件失败: {str(e)}")
-                
-                try:
-                    file_size = os.path.getsize(output_path)
-                except Exception as e:
-                    raise Exception(f"获取文件大小失败: {str(e)}")
-                
-                yield self.create_json_message({
-                    "success": True,
-                    "message": f"XMind文件已生成: {filename}",
-                    "file_path": output_path,
-                    "filename": filename,
-                    "file_size": file_size,
-                    "output_format": "file",
-                    "statistics": {
-                        "total_nodes": total_nodes,
-                        "max_depth_used": min(max_depth, self._calculate_depth(data)),
-                        "root_title": root_title
-                    }
-                })
             else:
-                # 默认base64格式
+                # base64格式（用于工作流集成）
                 temp_file = tempfile.NamedTemporaryFile(suffix='.xmind', delete=False)
                 temp_path = temp_file.name
                 temp_file.close()  # 关闭文件句柄，但保留文件
@@ -499,11 +417,18 @@ class Json2xmindTool(Tool):
                 
                 yield self.create_json_message({
                     "success": True,
-                    "message": "JSON成功转换为XMind思维导图",
+                    "message": "JSON成功转换为XMind思维导图（Base64格式）",
                     "file_base64": file_base64,
                     "filename": filename,
                     "file_size": file_size,
                     "output_format": "base64",
+                    "usage_note": "Base64数据可用于工作流中的文件处理节点，或通过外部工具解码为XMind文件",
+                    "file_tools_compatible": {
+                        "base64_data": file_base64,
+                        "suggested_filename": filename,
+                        "mime_type": "application/zip",
+                        "instructions": "可以将此 base64 数据传递给 File Tools 插件进行文件转换下载"
+                    },
                     "statistics": {
                         "total_nodes": total_nodes,
                         "max_depth_used": min(max_depth, self._calculate_depth(data)),

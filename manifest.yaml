@@ -1,17 +1,17 @@
-version: 0.0.2
+version: 0.2.1
 type: plugin
 author: chyax
-name: json2xmind-debug
+name: json2xmind
 label:
-  en_US: json2xmind
-  ja_JP: json2xmind
-  zh_Hans: json2xmind
-  pt_BR: json2xmind
+  en_US: JSON to XMind Converter
+  ja_JP: JSON to XMind コンバーター
+  zh_Hans: JSON 转 XMind 思维导图
+  pt_BR: Conversor JSON para XMind
 description:
-  en_US: transfer json to xmind
-  ja_JP: transfer json to xmind
-  zh_Hans: transfer json to xmind
-  pt_BR: transfer json to xmind
+  en_US: Convert JSON data to XMind mind maps with rich formatting and direct download support
+  ja_JP: JSON データを豊富なフォーマットと直接ダウンロード機能付きでXMindマインドマップに変換
+  zh_Hans: 将 JSON 数据转换为 XMind 思维导图，支持丰富格式和直接下载
+  pt_BR: Converta dados JSON para mapas mentais XMind com formatação rica e suporte a download direto
 icon: icon.svg
 icon_dark: icon-dark.svg
 resource:
@@ -26,7 +26,7 @@ plugins:
   tools:
     - provider/json2xmind.yaml
 meta:
-  version: 0.0.1
+  version: 0.2.1
   arch:
     - amd64
     - arm64

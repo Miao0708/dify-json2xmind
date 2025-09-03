@@ -20,10 +20,10 @@ parameters:
       zh_Hans: JSON 数据
       pt_BR: Dados JSON
     human_description:
-      en_US: "JSON data to convert (accepts JSON string or dict object). Use {{variable}} to pass data from workflow nodes. Supports nested structures and metadata with underscore prefix (e.g., _priority, _label)"
-      zh_Hans: "要转换的 JSON 数据（接受JSON字符串或字典对象）。使用 {{变量}} 从工作流节点传递数据。支持嵌套结构和下划线前缀的元数据（如 _priority、_label）"
-      pt_BR: "Dados JSON para converter (aceita string JSON ou objeto dict). Use {{variável}} para passar dados de nós do fluxo de trabalho. Suporta estruturas aninhadas e metadados com prefixo underscore"
-    llm_description: "Flexible JSON input - accepts both JSON strings and Python dict/list objects passed from workflow variables using {{variable}} syntax. Supports metadata fields with underscore prefix for XMind formatting."
+      en_US: "JSON data to convert. Use {{variable}} to pass data from workflow nodes. Supports nested structures, arrays, and metadata with underscore prefix (e.g., _priority, _label, _star)"
+      zh_Hans: "要转换的 JSON 数据。使用 {{变量}} 从工作流节点传递数据。支持嵌套结构、数组和下划线前缀的元数据（如 _priority、_label、_star）"
+      pt_BR: "Dados JSON para converter. Use {{variável}} para passar dados de nós do fluxo de trabalho. Suporta estruturas aninhadas, arrays e metadados com prefixo underscore"
+    llm_description: "JSON input data - accepts JSON strings or data passed from workflow variables using {{variable}} syntax. Supports rich metadata fields with underscore prefix for XMind visual formatting (priorities, colors, markers, etc.)"
     form: llm
   - name: root_title
     type: string
@@ -56,16 +56,16 @@ parameters:
   - name: output_format
     type: string
     required: false
-    default: "base64"
+    default: "download"
     label:
       en_US: Output Format
       zh_Hans: 输出格式
       pt_BR: Formato de Saída
     human_description:
-      en_US: "Choose output format: 'base64' for encoded data, 'file' for file path, 'blob' for XMind download, or 'zip' for ZIP download"
-      zh_Hans: "选择输出格式：'base64' 用于编码数据，'file' 用于文件路径，'blob' 用于 XMind 下载，'zip' 用于 ZIP 下载"
-      pt_BR: "Escolha o formato de saída: 'base64' para dados codificados, 'file' para caminho do arquivo, 'blob' para download XMind, ou 'zip' para download ZIP"
-    llm_description: "Output format selection: base64 encoding, file path, XMind blob download, or ZIP blob download"
+      en_US: "Choose output format: 'download' for direct XMind file download (recommended), or 'base64' for workflow integration"
+      zh_Hans: "选择输出格式：'download' 直接下载 XMind 文件（推荐），或 'base64' 用于工作流集成"
+      pt_BR: "Escolha o formato de saída: 'download' para download direto do arquivo XMind (recomendado), ou 'base64' para integração de fluxo de trabalho"
+    llm_description: "Output format: 'download' for direct XMind file download (best user experience), 'base64' for workflow integration with file processing nodes"
     form: form
 extra:
   python:
