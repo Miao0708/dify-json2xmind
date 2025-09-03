@@ -20,10 +20,10 @@ parameters:
       zh_Hans: JSON 数据
       pt_BR: Dados JSON
     human_description:
-      en_US: "JSON data to convert. Use {{variable}} to pass data from workflow nodes. Supports nested structures, arrays, and metadata with underscore prefix (e.g., _priority, _label, _star)"
-      zh_Hans: "要转换的 JSON 数据。使用 {{变量}} 从工作流节点传递数据。支持嵌套结构、数组和下划线前缀的元数据（如 _priority、_label、_star）"
-      pt_BR: "Dados JSON para converter. Use {{variável}} para passar dados de nós do fluxo de trabalho. Suporta estruturas aninhadas, arrays e metadados com prefixo underscore"
-    llm_description: "JSON input data - accepts JSON strings or data passed from workflow variables using {{variable}} syntax. Supports rich metadata fields with underscore prefix for XMind visual formatting (priorities, colors, markers, etc.)"
+      en_US: "JSON data to convert. Supports JSON strings, objects, arrays, or any data type from workflow variables {{variable}}. Rich metadata supported with underscore prefix (e.g., _priority, _label, _star)"
+      zh_Hans: "要转换的 JSON 数据。支持 JSON 字符串、对象、数组或通过工作流变量 {{变量}} 传递的任何数据类型。支持下划线前缀的丰富元数据（如 _priority、_label、_star）"
+      pt_BR: "Dados JSON para converter. Suporta strings JSON, objetos, arrays ou qualquer tipo de dados de variáveis do fluxo de trabalho {{variável}}. Metadados ricos suportados com prefixo underscore"
+    llm_description: "Flexible input supporting multiple data types: JSON strings, Python dict/list objects, primitive values, or any structured data from workflow variables. Automatically handles type detection and conversion. Supports rich XMind metadata fields with underscore prefix for visual formatting."
     form: llm
   - name: root_title
     type: string
@@ -52,20 +52,6 @@ parameters:
       zh_Hans: "最大嵌套深度，防止无限递归（1-20）"
       pt_BR: "Profundidade máxima de aninhamento para evitar recursão infinita (1-20)"
     llm_description: "Maximum depth limit for JSON structure conversion to prevent infinite recursion"
-    form: form
-  - name: output_format
-    type: string
-    required: false
-    default: "download"
-    label:
-      en_US: Output Format
-      zh_Hans: 输出格式
-      pt_BR: Formato de Saída
-    human_description:
-      en_US: "Choose output format: 'download' for direct XMind file download (recommended), or 'base64' for workflow integration"
-      zh_Hans: "选择输出格式：'download' 直接下载 XMind 文件（推荐），或 'base64' 用于工作流集成"
-      pt_BR: "Escolha o formato de saída: 'download' para download direto do arquivo XMind (recomendado), ou 'base64' para integração de fluxo de trabalho"
-    llm_description: "Output format: 'download' for direct XMind file download (best user experience), 'base64' for workflow integration with file processing nodes"
     form: form
 extra:
   python:
