@@ -1,0 +1,72 @@
+identity:
+  name: "json2xmind"
+  author: "chyax"
+  label:
+    en_US: "JSON to XMind Converter"
+    zh_Hans: "JSON 转 XMind 思维导图"
+    pt_BR: "Conversor JSON para XMind"
+description:
+  human:
+    en_US: "Convert JSON data to XMind mindmap with rich formatting support"
+    zh_Hans: "将 JSON 数据转换为 XMind 思维导图，支持丰富的格式化功能"
+    pt_BR: "Converta dados JSON para mapa mental XMind com suporte a formatação rica"
+  llm: "Convert structured JSON data to XMind mindmap format with support for priorities, labels, markers, and rich metadata"
+parameters:
+  - name: json_data
+    type: string
+    required: true
+    label:
+      en_US: JSON Data
+      zh_Hans: JSON 数据
+      pt_BR: Dados JSON
+    human_description:
+      en_US: "JSON data to convert (accepts JSON string or dict object). Use {{variable}} to pass data from workflow nodes. Supports nested structures and metadata with underscore prefix (e.g., _priority, _label)"
+      zh_Hans: "要转换的 JSON 数据（接受JSON字符串或字典对象）。使用 {{变量}} 从工作流节点传递数据。支持嵌套结构和下划线前缀的元数据（如 _priority、_label）"
+      pt_BR: "Dados JSON para converter (aceita string JSON ou objeto dict). Use {{variável}} para passar dados de nós do fluxo de trabalho. Suporta estruturas aninhadas e metadados com prefixo underscore"
+    llm_description: "Flexible JSON input - accepts both JSON strings and Python dict/list objects passed from workflow variables using {{variable}} syntax. Supports metadata fields with underscore prefix for XMind formatting."
+    form: llm
+  - name: root_title
+    type: string
+    required: false
+    default: "思维导图"
+    label:
+      en_US: Root Topic Title
+      zh_Hans: 根节点标题
+      pt_BR: Título do Tópico Raiz
+    human_description:
+      en_US: "The title for the root topic of the mind map"
+      zh_Hans: "思维导图根节点的标题"
+      pt_BR: "O título para o tópico raiz do mapa mental"
+    llm_description: "Title for the root node of the generated XMind mindmap"
+    form: form
+  - name: max_depth
+    type: number
+    required: false
+    default: 10
+    label:
+      en_US: Maximum Depth
+      zh_Hans: 最大深度
+      pt_BR: Profundidade Máxima
+    human_description:
+      en_US: "Maximum nesting depth to prevent infinite recursion (1-20)"
+      zh_Hans: "最大嵌套深度，防止无限递归（1-20）"
+      pt_BR: "Profundidade máxima de aninhamento para evitar recursão infinita (1-20)"
+    llm_description: "Maximum depth limit for JSON structure conversion to prevent infinite recursion"
+    form: form
+  - name: output_format
+    type: string
+    required: false
+    default: "base64"
+    label:
+      en_US: Output Format
+      zh_Hans: 输出格式
+      pt_BR: Formato de Saída
+    human_description:
+      en_US: "Choose output format: 'base64' for encoded data, 'file' for file path, 'blob' for XMind download, or 'zip' for ZIP download"
+      zh_Hans: "选择输出格式：'base64' 用于编码数据，'file' 用于文件路径，'blob' 用于 XMind 下载，'zip' 用于 ZIP 下载"
+      pt_BR: "Escolha o formato de saída: 'base64' para dados codificados, 'file' para caminho do arquivo, 'blob' para download XMind, ou 'zip' para download ZIP"
+    llm_description: "Output format selection: base64 encoding, file path, XMind blob download, or ZIP blob download"
+    form: form
+extra:
+  python:
+    source: tools/json2xmind.py

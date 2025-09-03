@@ -1,0 +1,24 @@
+identity:
+  author: "chyax"
+  name: "json2xmind"
+  label:
+    en_US: "JSON to XMind Converter"
+    zh_Hans: "JSON 转 XMind 工具"
+    pt_BR: "Conversor JSON para XMind"
+  description:
+    en_US: "Convert JSON data to XMind mindmap format"
+    zh_Hans: "将 JSON 数据转换为 XMind 思维导图格式"
+    pt_BR: "Converta dados JSON para formato de mapa mental XMind"
+  icon: "icon.svg"
+  tags:
+    - productivity
+    - design
+
+credentials_for_provider: {}
+
+tools:
+  - tools/json2xmind.yaml
+
+extra:
+  python:
+    source: provider/json2xmind.py
