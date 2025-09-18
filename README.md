@@ -286,6 +286,25 @@ steps:
 - 📥 用户一键下载，无需额外处理
 - ⚡ 完全兼容 Dify 工作流语法
 
+## 📚 文档和资源
+
+### 开发文档
+- 📖 [AI提示词指南](./docs/AI_PROMPT_GUIDE.md) - 教AI如何生成符合本工具的JSON格式
+- 🖥️ [Windows开发教程](./docs/DIFY_PLUGIN_DEVELOPMENT_GUIDE_WINDOWS.md) - Windows系统下的Dify插件开发完整指南
+- 🍎 [Mac M芯片开发教程](./docs/DIFY_PLUGIN_DEVELOPMENT_GUIDE_MAC_M.md) - Apple Silicon Mac专用的开发指南
+
+### 快速开始
+1. **AI提示词使用** - 使用AI生成JSON数据时，参考 [AI提示词指南](./docs/AI_PROMPT_GUIDE.md) 中的模板
+2. **插件开发** - 想要开发自己的Dify插件？查看对应系统的开发教程
+3. **JSON格式参考** - 查看上方示例或AI提示词指南了解完整的JSON格式规范
+
+### 技术特性
+- ✨ 支持27种不同的元数据标记
+- 🎨 丰富的视觉样式（优先级、颜色、图标、进度等）
+- 🔄 智能数据类型识别和转换
+- 📱 跨平台XMind文件兼容性
+- 🚀 高性能JSON解析和处理
+
 ---
 
 通过这个插件，您可以轻松将任何结构化数据转换为专业的思维导图，大大提升信息整理和可视化的效率！
