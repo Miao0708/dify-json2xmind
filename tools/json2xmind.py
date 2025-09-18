@@ -5,6 +5,7 @@ import os
 import tempfile
 import logging
 import mimetypes
+import re
 
 from dify_plugin import Tool
 from dify_plugin.entities.tool import ToolInvokeMessage
@@ -12,7 +13,6 @@ from dify_plugin.config.logger_format import plugin_logger_handler
 
 import xmind
 from xmind.core.topic import TopicElement
-from xmind.core.markerref import MarkerId
 
 # 设置插件专用日志
 plugin_logger = logging.getLogger(__name__)
@@ -204,18 +204,23 @@ class Json2xmindTool(Tool):
                 elif style == 'italic' and not current_title.startswith('*'):
                     topic.setTitle(f"*{current_title}*")
         
-        # 新增：颜色支持（用于主题着色）
+        # 新增：颜色支持（通过样式实现）
         if '_color' in data:
             color = str(data['_color']).lower().strip()
-            # XMind支持的基本颜色标记
+            # 由于XMind库的限制，暂时保留颜色信息作为备注
             valid_colors = ['red', 'orange', 'yellow', 'green', 'blue', 'purple', 'pink', 'gray', 'black']
             if color in valid_colors:
-                # 通过添加颜色相关的标记来实现
-                topic.addMarker(f'color-{color}')  # 注意：这可能需要XMind库的具体支持
+                # 由于XMind库的限制，暂时保留颜色信息作为备注
+                try:
+                    notes_element = topic.getNotes()
+                    current_text = notes_element.getContent() if notes_element else ""
+                except:
+                    current_text = ""
+                color_note = f"[颜色: {color}]" if not current_text else f"\n[颜色: {color}]"
+                topic.setPlainNotes(current_text + color_note)
     
     def _parse_input_data(self, input_data: Any) -> Any:
         """智能解析各种格式的输入数据，大幅提升兼容性"""
-        import re
         
         # 如果已经是字典或列表，直接返回
         if isinstance(input_data, (dict, list)):
@@ -520,7 +525,6 @@ class Json2xmindTool(Tool):
             return ""
         
         # 移除控制字符和特殊字符
-        import re
         cleaned = re.sub(r'[\x00-\x1f\x7f-\x9f]', '', str(title))
         
         # 限制长度，避免显示问题
@@ -792,8 +796,8 @@ class Json2xmindTool(Tool):
         max_child_depth = current_depth
         
         if isinstance(data, dict):
-            for value in data.values():
-                if not str(value).startswith('_'):  # 忽略元数据字段
+            for key, value in data.items():
+                if not str(key).startswith('_'):  # 忽略元数据字段
                     child_depth = self._calculate_depth(value, current_depth + 1)
                     max_child_depth = max(max_child_depth, child_depth)
         elif isinstance(data, list):
